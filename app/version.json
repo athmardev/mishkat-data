@@ -1,0 +1,8 @@
+{
+  "version": "1.0.0",
+  "build": 1,
+  "apk": "https://github.com/athmardev/mishkat-data/releases/download/app-v1.0.0/mishkat-1.0.0.apk",
+  "sha256": "0df16c757205dd25bc312a09305883f8fe04fea89ad31575d5302bbed93546de",
+  "size": 191514637,
+  "notes": "أول نسخة منشورة."
+}

@@ -1,8 +1,8 @@
 {
-  "version": "1.0.2",
-  "build": 3,
-  "apk": "https://github.com/athmardev/mishkat-data/releases/download/app-v1.0.2/mishkat-1.0.2.apk",
-  "sha256": "88c4bdb7d5d7bc80566fbd9cec8bb8930d5ec22b5c37794962825edb3cfa438c",
-  "size": 191581645,
-  "notes": "تحديث أذكار الصباح والمساء."
+  "version": "1.0.3",
+  "build": 4,
+  "apk": "https://github.com/athmardev/mishkat-data/releases/download/app-v1.0.3/mishkat-1.0.3.apk",
+  "sha256": "03736d200ff62888211022344b8fe31ff4acf0ef188b71bfd6064a8e4907b8ab",
+  "size": 191780653,
+  "notes": "مشاركة التطبيق برابط آخر نسخة من البرنامج مباشرة."
 }

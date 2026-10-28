@@ -1,0 +1,68 @@
+# يرفع ملف mishkat.apk من كل إصدار جديد إلى قناة التطبيق في تليجرام ويثبّته أعلاها.
+# البوت العادي لا يرفع أكبر من 50MB، فنشغّل خادم Bot API محليًا (يرفع حتى 2000MB) أثناء التشغيل فقط.
+# الأسرار (تُضاف من Settings ← Secrets and variables ← Actions):
+#   TELEGRAM_BOT_TOKEN  رمز البوت من @BotFather (والبوت مسؤول في القناة بصلاحية النشر والتثبيت)
+#   TELEGRAM_API_ID     و  TELEGRAM_API_HASH  من my.telegram.org
+name: Telegram APK
+
+on:
+  release:
+    types: [published]
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: 'وسم الإصدار (مثل app-v1.0.3)'
+        required: true
+
+permissions:
+  contents: read
+
+jobs:
+  upload:
+    # إصدارات التطبيق فقط (وسمها يبدأ بـ app-v)، لا إصدارات البيانات
+    if: github.event_name == 'workflow_dispatch' || startsWith(github.event.release.tag_name, 'app-v')
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    env:
+      TAG: ${{ github.event.release.tag_name || inputs.tag }}
+      CHANNEL: '@mishkat_apps'
+    steps:
+      - name: تنزيل الملف من الإصدار
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release download "$TAG" --repo "$GITHUB_REPOSITORY" --pattern mishkat.apk --dir .
+          ls -l mishkat.apk
+
+      - name: تشغيل خادم Bot API المحلي
+        env:
+          TELEGRAM_API_ID: ${{ secrets.TELEGRAM_API_ID }}
+          TELEGRAM_API_HASH: ${{ secrets.TELEGRAM_API_HASH }}
+        run: |
+          docker run -d --name botapi -p 8081:8081 \
+            -e TELEGRAM_API_ID -e TELEGRAM_API_HASH -e TELEGRAM_LOCAL=1 \
+            aiogram/telegram-bot-api:latest
+          for i in $(seq 1 30); do
+            curl -sf "http://localhost:8081/bot${{ secrets.TELEGRAM_BOT_TOKEN }}/getMe" > /dev/null && exit 0
+            sleep 2
+          done
+          docker logs botapi
+          exit 1
+
+      - name: الرفع إلى القناة وتثبيته
+        env:
+          TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+        run: |
+          VERSION="${TAG#app-v}"
+          CAPTION="تطبيق مِشكاة ${VERSION}
+          آخر نسخة: نزّلها من هنا ثم افتح الملف لتثبيتها.
+          https://github.com/${GITHUB_REPOSITORY}/releases/tag/${TAG}"
+          RES=$(curl -sS "http://localhost:8081/bot${TOKEN}/sendDocument" \
+            -F chat_id="$CHANNEL" \
+            -F document=@mishkat.apk \
+            -F caption="$CAPTION")
+          echo "$RES" | jq '{ok, description, message_id: .result.message_id}'
+          [ "$(echo "$RES" | jq -r .ok)" = "true" ] || exit 1
+          MID=$(echo "$RES" | jq -r .result.message_id)
+          curl -sS "http://localhost:8081/bot${TOKEN}/pinChatMessage" \
+            -d chat_id="$CHANNEL" -d message_id="$MID" -d disable_notification=false | jq '{ok, description}'

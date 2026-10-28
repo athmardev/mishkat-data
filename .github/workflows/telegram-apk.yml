@@ -57,10 +57,11 @@ jobs:
           CAPTION="تطبيق مِشكاة ${VERSION}
           آخر نسخة: نزّلها من هنا ثم افتح الملف لتثبيتها.
           https://github.com/${GITHUB_REPOSITORY}/releases/tag/${TAG}"
+          # --form-string: يمنع curl من قراءة "@mishkat_apps" كاسم ملف
           RES=$(curl -sS "http://localhost:8081/bot${TOKEN}/sendDocument" \
-            -F chat_id="$CHANNEL" \
+            --form-string chat_id="$CHANNEL" \
             -F document=@mishkat.apk \
-            -F caption="$CAPTION")
+            --form-string caption="$CAPTION")
           echo "$RES" | jq '{ok, description, message_id: .result.message_id}'
           [ "$(echo "$RES" | jq -r .ok)" = "true" ] || exit 1
           MID=$(echo "$RES" | jq -r .result.message_id)

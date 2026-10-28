@@ -1,8 +1,20 @@
 {
-  "version": "1.0.3",
-  "build": 4,
-  "apk": "https://github.com/athmardev/mishkat-data/releases/download/app-v1.0.3/mishkat-1.0.3.apk",
-  "sha256": "03736d200ff62888211022344b8fe31ff4acf0ef188b71bfd6064a8e4907b8ab",
-  "size": 191780653,
-  "notes": "مشاركة التطبيق برابط آخر نسخة من البرنامج مباشرة."
+  "version": "1.0.4",
+  "build": 5,
+  "apk": "https://github.com/athmardev/mishkat-data/releases/download/app-v1.0.4/mishkat-1.0.4.apk",
+  "sha256": "1b844636f20c449ae068f78d0208b8e9104700697935b23fb868810dc4ff6bd8",
+  "size": 192387233,
+  "apks": {
+    "arm64-v8a": {
+      "url": "https://github.com/athmardev/mishkat-data/releases/download/app-v1.0.4/mishkat.apk",
+      "sha256": "6efb489c21ff15a7e1a870e00e7177bf133a310793dcce4a1925d3ed56f2b311",
+      "size": 102437224
+    },
+    "armeabi-v7a": {
+      "url": "https://github.com/athmardev/mishkat-data/releases/download/app-v1.0.4/mishkat-arm32.apk",
+      "sha256": "22fb32203b2bb42070b6eee6ac3f3ae7951fe47cf1ea0e2dfc8e36af53f065c8",
+      "size": 112860152
+    }
+  },
+  "notes": "واجهة بالإنجليزية، وطرق تقليب الصفحات، وملء الشاشة بنقرتين، واتجاه القبلة، وتنبيه أذونات الأذان، وحفظ عدّادات الأذكار، وملف تحميل أصغر."
 }

@@ -8,5 +8,6 @@
 | `noorania.mishkatbook` | 39 | القاعدة النورانية، الشيخ نور محمد حقاني |
 | `tuhfa-waraqi.mishkatbook` | 29 | ضبط منظومة تحفة الأطفال، حسن الوراقي |
 | `jazariyya-zughbi.mishkatbook` | 20 | المقدمة الجزرية ويليه تحفة الأطفال، ضبط محمد تميم الزعبي |
+| `ghayat.mishkatbook` | 304 | غاية المريد في علم التجويد، عطية قابل نصر |
 
 التحويل: `python3 build_book.py <ملف.pdf> <الناتج.mishkatbook> <العرض بالبكسل> <جودة WebP>` (يحتاج `pdftoppm` وPillow).

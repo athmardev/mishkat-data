@@ -3,11 +3,21 @@
 # الأسرار (تُضاف من Settings ← Secrets and variables ← Actions):
 #   TELEGRAM_BOT_TOKEN  رمز البوت من @BotFather (والبوت مسؤول في القناة بصلاحية النشر والتثبيت)
 #   TELEGRAM_API_ID     و  TELEGRAM_API_HASH  من my.telegram.org
+#
+# ثلاثة مسارات تشغيل حتى لا يفوت إصدار:
+#   1) نشر إصدار (release: published)، وهو الأصل.
+#   2) تعديل app/version.json على main: تُرفع آخر نسخة مذكورة فيه (وسمها app-v<version>) إن لم تُرفع من قبل.
+#      هذا شبكة أمان لأن حدث النشر لم يُطلق التشغيل عند الإصدار 1.0.5.
+#   3) يدويًا بوسم محدد (يتجاوز فحص «سبق الرفع» لإعادة النشر عمدًا).
+# منع التكرار: بعد نجاح الرفع يُنشأ وسم خفيف tg-posted-<الوسم>؛ وإن وُجد يتوقف التشغيل التلقائي.
 name: Telegram APK
 
 on:
   release:
     types: [published]
+  push:
+    branches: [main]
+    paths: ['app/version.json']
   workflow_dispatch:
     inputs:
       tag:
@@ -15,26 +25,56 @@ on:
         required: true
 
 permissions:
-  contents: read
+  contents: write
+
+concurrency:
+  group: telegram-apk
+  cancel-in-progress: false
 
 jobs:
   upload:
     # إصدارات التطبيق فقط (وسمها يبدأ بـ app-v)، لا إصدارات البيانات
-    if: github.event_name == 'workflow_dispatch' || startsWith(github.event.release.tag_name, 'app-v')
+    if: github.event_name != 'release' || startsWith(github.event.release.tag_name, 'app-v')
     runs-on: ubuntu-latest
     timeout-minutes: 30
     env:
-      TAG: ${{ github.event.release.tag_name || inputs.tag }}
       CHANNEL: '@mishkat_apps'
+      GH_TOKEN: ${{ github.token }}
     steps:
-      - name: تنزيل الملف من الإصدار
-        env:
-          GH_TOKEN: ${{ github.token }}
+      - name: تحديد الوسم وفحص سبق الرفع
+        id: chk
         run: |
-          gh release download "$TAG" --repo "$GITHUB_REPOSITORY" --pattern mishkat.apk --dir .
+          if [ "${{ github.event_name }}" = "release" ]; then
+            TAG="${{ github.event.release.tag_name }}"
+          elif [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            TAG="${{ inputs.tag }}"
+          else
+            git clone --depth 1 "https://github.com/${GITHUB_REPOSITORY}.git" src
+            TAG="app-v$(jq -r .version src/app/version.json)"
+          fi
+          echo "tag=$TAG" >> "$GITHUB_OUTPUT"
+          echo "الوسم: $TAG"
+          skip=false
+          if [ "${{ github.event_name }}" != "workflow_dispatch" ]; then
+            if gh api "repos/${GITHUB_REPOSITORY}/git/ref/tags/tg-posted-${TAG}" > /dev/null 2>&1; then
+              echo "سبق رفع $TAG إلى تليجرام؛ لا شيء لفعله."
+              skip=true
+            elif ! gh release view "$TAG" --repo "$GITHUB_REPOSITORY" --json assets,isDraft \
+                   --jq 'select(.isDraft==false) | .assets[].name' 2>/dev/null | grep -qx mishkat.apk; then
+              echo "الإصدار $TAG غير منشور بعد أو بلا mishkat.apk؛ يُتخطى الآن."
+              skip=true
+            fi
+          fi
+          echo "skip=$skip" >> "$GITHUB_OUTPUT"
+
+      - name: تنزيل الملف من الإصدار
+        if: steps.chk.outputs.skip != 'true'
+        run: |
+          gh release download "${{ steps.chk.outputs.tag }}" --repo "$GITHUB_REPOSITORY" --pattern mishkat.apk --dir .
           ls -l mishkat.apk
 
       - name: تشغيل خادم Bot API المحلي
+        if: steps.chk.outputs.skip != 'true'
         env:
           TELEGRAM_API_ID: ${{ secrets.TELEGRAM_API_ID }}
           TELEGRAM_API_HASH: ${{ secrets.TELEGRAM_API_HASH }}
@@ -50,8 +90,10 @@ jobs:
           exit 1
 
       - name: الرفع إلى القناة وتثبيته
+        if: steps.chk.outputs.skip != 'true'
         env:
           TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TAG: ${{ steps.chk.outputs.tag }}
         run: |
           VERSION="${TAG#app-v}"
           CAPTION="تطبيق مِشكاة ${VERSION}
@@ -67,3 +109,6 @@ jobs:
           MID=$(echo "$RES" | jq -r .result.message_id)
           curl -sS "http://localhost:8081/bot${TOKEN}/pinChatMessage" \
             -d chat_id="$CHANNEL" -d message_id="$MID" -d disable_notification=false | jq '{ok, description}'
+          # علامة «سبق الرفع»: وسم خفيف على آخر إيداع في main
+          gh api "repos/${GITHUB_REPOSITORY}/git/refs" -f ref="refs/tags/tg-posted-${TAG}" -f sha="$GITHUB_SHA" > /dev/null \
+            || echo "تعذّر إنشاء علامة tg-posted-${TAG}"

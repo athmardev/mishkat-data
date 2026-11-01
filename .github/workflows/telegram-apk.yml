@@ -4,17 +4,18 @@
 #   TELEGRAM_BOT_TOKEN  رمز البوت من @BotFather (والبوت مسؤول في القناة بصلاحية النشر والتثبيت)
 #   TELEGRAM_API_ID     و  TELEGRAM_API_HASH  من my.telegram.org
 #
-# ثلاثة مسارات تشغيل حتى لا يفوت إصدار:
-#   1) نشر إصدار (release: published)، وهو الأصل.
-#   2) تعديل app/version.json على main: تُرفع آخر نسخة مذكورة فيه (وسمها app-v<version>) إن لم تُرفع من قبل.
-#      هذا شبكة أمان لأن حدث النشر لم يُطلق التشغيل عند الإصدار 1.0.5.
-#   3) يدويًا بوسم محدد (يتجاوز فحص «سبق الرفع» لإعادة النشر عمدًا).
+# مساران للتشغيل:
+#   1) تعديل app/version.json على main (يحدث بعد نشر الإصدار وتحديث الملف): تُرفع آخر نسخة مذكورة فيه
+#      (وسمها app-v<version>) إن كان إصدارها منشورًا وفيه mishkat.apk ولم تُرفع من قبل. وهذا هو وقت ظهور التحديث للمستخدمين أيضًا،
+#      ولذلك تكون ملاحظات الإصدار (notes في version.json) جاهزة وقت الرفع. (أُزيل مسار «نشر إصدار» لأنه لم يُطلق التشغيل للإصدار 1.0.5،
+#      ولأنه كان سيعمل قبل أن تُكتب الملاحظات في version.json.)
+#   2) يدويًا بوسم محدد (يتجاوز فحص «سبق الرفع» لإعادة النشر عمدًا).
+# رسالة القناة تحمل «ما الجديد» من حقل notes في app/version.json (وإلا من نص الإصدار على GitHub):
+#   في وصف الملف إن كان الكل في 1024 حرفًا، وإلا في رسالة تليها (حتى 4000 حرف).
 # منع التكرار: بعد نجاح الرفع يُنشأ وسم خفيف tg-posted-<الوسم>؛ وإن وُجد يتوقف التشغيل التلقائي.
 name: Telegram APK
 
 on:
-  release:
-    types: [published]
   push:
     branches: [main]
     paths: ['app/version.json']
@@ -33,8 +34,6 @@ concurrency:
 
 jobs:
   upload:
-    # إصدارات التطبيق فقط (وسمها يبدأ بـ app-v)، لا إصدارات البيانات
-    if: github.event_name != 'release' || startsWith(github.event.release.tag_name, 'app-v')
     runs-on: ubuntu-latest
     timeout-minutes: 30
     env:
@@ -44,9 +43,7 @@ jobs:
       - name: تحديد الوسم وفحص سبق الرفع
         id: chk
         run: |
-          if [ "${{ github.event_name }}" = "release" ]; then
-            TAG="${{ github.event.release.tag_name }}"
-          elif [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
             TAG="${{ inputs.tag }}"
           else
             git clone --depth 1 "https://github.com/${GITHUB_REPOSITORY}.git" src
@@ -96,9 +93,25 @@ jobs:
           TAG: ${{ steps.chk.outputs.tag }}
         run: |
           VERSION="${TAG#app-v}"
-          CAPTION="تطبيق مِشكاة ${VERSION}
-          آخر نسخة: نزّلها من هنا ثم افتح الملف لتثبيتها.
-          https://github.com/${GITHUB_REPOSITORY}/releases/tag/${TAG}"
+          # ما الجديد: ملاحظات app/version.json إن كانت لهذا الإصدار، وإلا نص الإصدار على GitHub
+          NOTES=$(gh api "repos/${GITHUB_REPOSITORY}/contents/app/version.json" --jq .content | base64 -d \
+                  | jq -r --arg v "$VERSION" 'select(.version==$v) | .notes // empty')
+          [ -n "$NOTES" ] || NOTES=$(gh release view "$TAG" --repo "$GITHUB_REPOSITORY" --json body --jq .body)
+          export TAG VERSION NOTES REPO="$GITHUB_REPOSITORY"
+          python3 - <<'PY'
+          import os
+          v, tag, repo = os.environ['VERSION'], os.environ['TAG'], os.environ['REPO']
+          notes = os.environ.get('NOTES', '').strip()
+          head = f"تطبيق مِشكاة {v}\n"
+          foot = f"\nنزّل الملف من هنا ثم افتحه لتثبيته، أو حدّث من داخل التطبيق.\nhttps://github.com/{repo}/releases/tag/{tag}"
+          body = f"\nما الجديد في هذه النسخة:\n{notes}\n" if notes else ""
+          cap, extra = head + body + foot, ""
+          if len(cap) > 1024:  # حد وصف الملف في تليجرام
+              cap, extra = head + foot, f"ما الجديد في {v}:\n{notes}"[:4000]
+          open('caption.txt', 'w', encoding='utf-8').write(cap)
+          open('extra.txt', 'w', encoding='utf-8').write(extra)
+          PY
+          CAPTION="$(cat caption.txt)"
           # --form-string: يمنع curl من قراءة "@mishkat_apps" كاسم ملف
           RES=$(curl -sS "http://localhost:8081/bot${TOKEN}/sendDocument" \
             --form-string chat_id="$CHANNEL" \
@@ -109,6 +122,10 @@ jobs:
           MID=$(echo "$RES" | jq -r .result.message_id)
           curl -sS "http://localhost:8081/bot${TOKEN}/pinChatMessage" \
             -d chat_id="$CHANNEL" -d message_id="$MID" -d disable_notification=false | jq '{ok, description}'
+          if [ -s extra.txt ]; then
+            curl -sS "http://localhost:8081/bot${TOKEN}/sendMessage" \
+              --form-string chat_id="$CHANNEL" --form-string text="$(cat extra.txt)" | jq '{ok, description}'
+          fi
           # علامة «سبق الرفع»: وسم خفيف على آخر إيداع في main
           gh api "repos/${GITHUB_REPOSITORY}/git/refs" -f ref="refs/tags/tg-posted-${TAG}" -f sha="$GITHUB_SHA" > /dev/null \
             || echo "تعذّر إنشاء علامة tg-posted-${TAG}"

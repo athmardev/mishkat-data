@@ -1,20 +1,20 @@
 {
-  "version": "1.0.6",
-  "build": 7,
-  "apk": "https://github.com/athmardev/mishkat-data/releases/download/app-v1.0.6/mishkat-1.0.6.apk",
-  "sha256": "26e6f438ba1c67854abbfa054998f377335b57cc377f5a30a6a3c561bf55e4a9",
-  "size": 271628461,
+  "version": "1.0.7",
+  "build": 8,
+  "apk": "https://github.com/athmardev/mishkat-data/releases/download/app-v1.0.7/mishkat-1.0.7.apk",
+  "sha256": "b14bf5313624fd976ceb3e2ef629f0cea2810368da3d71031f03a89b88de8afa",
+  "size": 275828963,
   "apks": {
     "arm64-v8a": {
-      "url": "https://github.com/athmardev/mishkat-data/releases/download/app-v1.0.6/mishkat.apk",
-      "sha256": "e7e875996b345872245a12307fe5d241154e64caf2c954a93612e5c7a8408130",
-      "size": 130477965
+      "url": "https://github.com/athmardev/mishkat-data/releases/download/app-v1.0.7/mishkat.apk",
+      "sha256": "5f3bea4f80e977e811292df6c5ef024ba8639020decdb2f78541d892e1c7e14b",
+      "size": 132302787
     },
     "armeabi-v7a": {
-      "url": "https://github.com/athmardev/mishkat-data/releases/download/app-v1.0.6/mishkat-arm32.apk",
-      "sha256": "86407dbaf88ad08c3b4770a2944573f64cf87f056c804468ce127d27f3ca8182",
-      "size": 132708899
+      "url": "https://github.com/athmardev/mishkat-data/releases/download/app-v1.0.7/mishkat-arm32.apk",
+      "sha256": "9d5f72ec49fc553b861de90fe52fcddd8d56d1c6af7eb31f02b290bc22226c12",
+      "size": 134746713
     }
   },
-  "notes": "التسميع والتصحيح بصوتك (يعمل دون إنترنت بعد تنزيل نموذج صغير مرة واحدة)، وبطاقة حكمة تتجدد مرتين يوميًا، وجولة تعريفية، وويدجت جديدة، وأرباع الأجزاء في الفهرس، وعلامات مستقلة لكل ختمة، و34 قارئًا للتلاوة المتواصلة، وإشعار بصدور التحديثات، وإصلاحات."
+  "notes": "تنزيل مصحف قارئ كامل في الخلفية لسماعه دون إنترنت، وخيار «مصحف الحفاظ» لتظليل المصحف بألوان الحفظ الميسر (مطفأ افتراضيًا)، وألوان ليلية داكنة أوضح، وإشعار تحكم بالتلاوة (السابقة، إيقاف مؤقت، التالية، إيقاف)، وبطاقة تنبيه في الرئيسية للأذونات الناقصة، وتقوية تحديث ويدجت الصلاة، ورقم الصفحة أسفلها، وشاشة «تلاوات التصحيح»، ودليل استخدام محدّث، وإصلاحات."
 }

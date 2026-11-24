@@ -1,20 +1,20 @@
 {
-  "version": "1.0.8",
-  "build": 9,
-  "apk": "https://github.com/athmardev/mishkat-data/releases/download/app-v1.0.8/mishkat-1.0.8.apk",
-  "sha256": "c380e31145ffae78c046515fab70d9c8ae732b001ecb4e9d439476d7a1f5a865",
-  "size": 276453157,
+  "version": "1.0.7",
+  "build": 8,
+  "apk": "https://github.com/athmardev/mishkat-data/releases/download/app-v1.0.7/mishkat-1.0.7.apk",
+  "sha256": "b14bf5313624fd976ceb3e2ef629f0cea2810368da3d71031f03a89b88de8afa",
+  "size": 275828963,
   "apks": {
     "arm64-v8a": {
-      "url": "https://github.com/athmardev/mishkat-data/releases/download/app-v1.0.8/mishkat.apk",
-      "sha256": "bcb3e9c9b2b3d58738d283c32dfc1e743a1703a1521f1b6894330fc8e125e240",
-      "size": 132910597
+      "url": "https://github.com/athmardev/mishkat-data/releases/download/app-v1.0.7/mishkat.apk",
+      "sha256": "5f3bea4f80e977e811292df6c5ef024ba8639020decdb2f78541d892e1c7e14b",
+      "size": 132302787
     },
     "armeabi-v7a": {
-      "url": "https://github.com/athmardev/mishkat-data/releases/download/app-v1.0.8/mishkat-arm32.apk",
-      "sha256": "9bcc1cd21aa92fdf9b25322c1f20893c166f5b82fad68bfe5b4a8cd2ce810f51",
-      "size": 135370907
+      "url": "https://github.com/athmardev/mishkat-data/releases/download/app-v1.0.7/mishkat-arm32.apk",
+      "sha256": "9d5f72ec49fc553b861de90fe52fcddd8d56d1c6af7eb31f02b290bc22226c12",
+      "size": 134746713
     }
   },
-  "notes": "ويدجت جديد «شريط الصلاة» (الصلاة القادمة وكم باقي عليها، ثم الإقامة بعد الأذان) مع إعداد وقت الإقامة لكل صلاة، وتكبير بصوت الشيخ عبدالمجيد السريحي صوتًا افتراضيًا للأذان مع إمكان اختيار ملف آخر، وشاشة «ما الجديد»، وبطاقة الأذونات في الرئيسية تشمل الموقع والميكروفون وتثبيت التحديثات، ودليل استخدام محدّث."
+  "notes": "تنزيل مصحف قارئ كامل في الخلفية لسماعه دون إنترنت، وخيار «مصحف الحفاظ» لتظليل المصحف بألوان الحفظ الميسر (مطفأ افتراضيًا)، وألوان ليلية داكنة أوضح، وإشعار تحكم بالتلاوة (السابقة، إيقاف مؤقت، التالية، إيقاف)، وبطاقة تنبيه في الرئيسية للأذونات الناقصة، وتقوية تحديث ويدجت الصلاة، ورقم الصفحة أسفلها، وشاشة «تلاوات التصحيح»، ودليل استخدام محدّث، وإصلاحات."
 }

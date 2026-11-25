@@ -1,20 +1,20 @@
 {
-  "version": "1.0.7",
-  "build": 8,
-  "apk": "https://github.com/athmardev/mishkat-data/releases/download/app-v1.0.7/mishkat-1.0.7.apk",
-  "sha256": "b14bf5313624fd976ceb3e2ef629f0cea2810368da3d71031f03a89b88de8afa",
-  "size": 275828963,
+  "version": "1.0.9",
+  "build": 10,
+  "apk": "https://github.com/athmardev/mishkat-data/releases/download/app-v1.0.9/mishkat-1.0.9.apk",
+  "sha256": "3a59afd51be1f319b1e5cbb8f2f2b8a9111dd4f28ee69a1de76692850c61713f",
+  "size": 276453149,
   "apks": {
     "arm64-v8a": {
-      "url": "https://github.com/athmardev/mishkat-data/releases/download/app-v1.0.7/mishkat.apk",
-      "sha256": "5f3bea4f80e977e811292df6c5ef024ba8639020decdb2f78541d892e1c7e14b",
-      "size": 132302787
+      "url": "https://github.com/athmardev/mishkat-data/releases/download/app-v1.0.9/mishkat.apk",
+      "sha256": "1b344b0b27cb04c28e32610bd8d3da2c2e7a62f3a076b7e3c0b26473ff0ce9e2",
+      "size": 132910589
     },
     "armeabi-v7a": {
-      "url": "https://github.com/athmardev/mishkat-data/releases/download/app-v1.0.7/mishkat-arm32.apk",
-      "sha256": "9d5f72ec49fc553b861de90fe52fcddd8d56d1c6af7eb31f02b290bc22226c12",
-      "size": 134746713
+      "url": "https://github.com/athmardev/mishkat-data/releases/download/app-v1.0.9/mishkat-arm32.apk",
+      "sha256": "16693dfa76055ca9de5ff60966542f6b83b7a5de77dc3b74658bcd72ff9e0eee",
+      "size": 135370899
     }
   },
-  "notes": "تنزيل مصحف قارئ كامل في الخلفية لسماعه دون إنترنت، وخيار «مصحف الحفاظ» لتظليل المصحف بألوان الحفظ الميسر (مطفأ افتراضيًا)، وألوان ليلية داكنة أوضح، وإشعار تحكم بالتلاوة (السابقة، إيقاف مؤقت، التالية، إيقاف)، وبطاقة تنبيه في الرئيسية للأذونات الناقصة، وتقوية تحديث ويدجت الصلاة، ورقم الصفحة أسفلها، وشاشة «تلاوات التصحيح»، ودليل استخدام محدّث، وإصلاحات."
+  "notes": "ويدجت «شريط الصلاة» (الصلاة القادمة وكم باقي عليها، ثم الإقامة بعد الأذان، ثم الشروق بعد الفجر) مع إعداد وقت الإقامة لكل صلاة، وانتقال التحديد والعدّاد في شاشة المواقيت من الفجر إلى الشروق ثم الظهر، وتكبير الشيخ عبدالمجيد السريحي صوتًا افتراضيًا للأذان مع إمكان اختيار ملف آخر، وشاشة «ما الجديد»، وبطاقة الأذونات في الرئيسية تشمل الموقع والميكروفون وتثبيت التحديثات، ودليل استخدام محدّث، وإصلاح ظهور ويدجت الشريط أبيض."
 }
